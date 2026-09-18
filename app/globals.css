@@ -40,6 +40,16 @@ body {
 
 /* Print Styles for PDF Export */
 @media print {
+  @page {
+    size: A4;
+    margin: 12mm 10mm;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
   body {
     background: #ffffff !important;
     color: #0f172a !important;
@@ -47,6 +57,7 @@ body {
 
   header,
   footer,
+  nav,
   .no-print,
   button,
   .history-drawer,
@@ -54,8 +65,15 @@ body {
     display: none !important;
   }
 
-  .print-page {
-    page-break-after: always;
+  .print-avoid-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-section {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 20px !important;
   }
 
   .print-container {
@@ -63,16 +81,5 @@ body {
     max-width: 100% !important;
     margin: 0 !important;
     padding: 0 !important;
-  }
-
-  .card-print {
-    border: 1px solid #cbd5e1 !important;
-    background: #ffffff !important;
-    color: #0f172a !important;
-    box-shadow: none !important;
-  }
-
-  .text-print-dark {
-    color: #0f172a !important;
   }
 }

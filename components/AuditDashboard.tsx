@@ -11,6 +11,7 @@ import { AssetsCard } from "@/components/AssetsCard";
 import { AgencyPitchCard } from "@/components/AgencyPitchCard";
 import { AiRecommendations } from "@/components/AiRecommendations";
 import { PdfExportButton } from "@/components/PdfExportButton";
+import { PrintReport } from "@/components/PrintReport";
 import {
   Sparkles,
   Gauge,
@@ -25,6 +26,7 @@ import {
   ShieldCheck,
   Package,
   Briefcase,
+  FileText,
 } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
@@ -43,7 +45,8 @@ type TabType =
   | "assets"
   | "pitch"
   | "ai"
-  | "tech";
+  | "tech"
+  | "full";
 
 export function AuditDashboard({
   report,
@@ -62,14 +65,17 @@ export function AuditDashboard({
     { id: "pitch", label: "Agenturní nabídka", icon: Briefcase },
     { id: "ai", label: "AI Doporučení", icon: Sparkles, badge: report.aiRecommendations.length },
     { id: "tech", label: "Technologie", icon: Cpu, badge: report.techStack.length },
+    { id: "full", label: "Celý report (PDF)", icon: FileText, badge: "Kompletní" },
   ];
 
   const topRecommendations = report.aiRecommendations.slice(0, 3);
 
   return (
     <div className="w-full max-w-7xl mx-auto space-y-6 print-container">
-      {/* Top Header Card */}
-      <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Interactive Screen Dashboard (Hidden when printing to PDF) */}
+      <div className="print:hidden space-y-6">
+        {/* Top Header Card */}
+        <div className="p-6 rounded-3xl bg-slate-900/80 border border-slate-800 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="space-y-1.5 overflow-hidden">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
@@ -323,6 +329,28 @@ export function AuditDashboard({
           )}
         </div>
       )}
+
+      {/* Tab 10: Full Complete Report Preview */}
+      {activeTab === "full" && (
+        <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-2xl border border-slate-700 text-slate-900">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-4 bg-slate-900 rounded-2xl mb-6 text-white no-print">
+            <div>
+              <h3 className="font-bold text-base">Náhled kompletního auditu celé kontroly</h3>
+              <p className="text-xs text-slate-400">
+                Tento ucelený dokument obsahuje všechny sekce naráz a v této podobě se vyexportuje do PDF.
+              </p>
+            </div>
+            <PdfExportButton targetUrl={report.normalizedUrl} />
+          </div>
+          <PrintReport report={report} />
+        </div>
+      )}
+      </div>
+
+      {/* Dedicated Print View (Rendered exclusively when printing or saving as PDF) */}
+      <div className="hidden print:block w-full">
+        <PrintReport report={report} />
+      </div>
     </div>
   );
 }
