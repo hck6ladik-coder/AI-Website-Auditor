@@ -34,7 +34,7 @@ export function PrintReport({ report }: PrintReportProps) {
       <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
           <Image
-            src="/logo.png"
+            src="/brand-logo.png"
             alt="AI Website Auditor Emblem"
             width={52}
             height={52}

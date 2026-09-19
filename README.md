@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="public/logo.png" alt="AI Website Auditor Emblem" width="130" style="border-radius: 24px;" />
+<img src="public/brand-logo.png" alt="AI Website Auditor Emblem" width="130" />
 
 # AI Website Auditor 🚀
 

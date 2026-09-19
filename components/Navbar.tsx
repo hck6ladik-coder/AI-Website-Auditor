@@ -29,7 +29,7 @@ export function Navbar({
         >
           <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
             <Image
-              src="/logo.png"
+              src="/brand-logo.png"
               alt="AI Website Auditor Logo"
               width={36}
               height={36}

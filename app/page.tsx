@@ -194,7 +194,7 @@ export default function Home() {
                 {/* Free floating metallic emblem */}
                 <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center">
                   <Image
-                    src="/logo.png"
+                    src="/brand-logo.png"
                     alt="AI Website Auditor Emblem"
                     width={128}
                     height={128}
