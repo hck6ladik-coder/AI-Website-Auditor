@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { AuditReport } from "@/types/audit";
 import { formatDate } from "@/lib/utils";
 
@@ -31,19 +32,28 @@ export function PrintReport({ report }: PrintReportProps) {
     <div className="print-report text-slate-900 bg-white font-sans text-xs leading-normal p-4 sm:p-8 space-y-6">
       {/* Header & Meta */}
       <div className="border-b-2 border-slate-900 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="font-extrabold text-xs tracking-wider uppercase bg-slate-900 text-white px-2.5 py-0.5 rounded">
-              AI Website Auditor
-            </span>
-            <span className="text-slate-500 font-medium text-xs">Kompletní technický audit webu</span>
+        <div className="flex items-center gap-4">
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={56}
+            height={56}
+            className="w-14 h-14 object-contain rounded-xl border border-slate-300 p-1 bg-slate-950 shadow-sm"
+          />
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-extrabold text-xs tracking-wider uppercase bg-slate-900 text-white px-2.5 py-0.5 rounded">
+                AI Website Auditor
+              </span>
+              <span className="text-slate-500 font-medium text-xs">Kompletní technický audit webu</span>
+            </div>
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight break-all">
+              {report.normalizedUrl}
+            </h1>
+            <p className="text-slate-600 mt-0.5 text-xs">
+              Audit proveden: {formatDate(report.timestamp)} • Doba analýzy: {report.executionTimeMs} ms
+            </p>
           </div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight break-all">
-            {report.normalizedUrl}
-          </h1>
-          <p className="text-slate-600 mt-0.5 text-xs">
-            Audit proveden: {formatDate(report.timestamp)} • Doba analýzy: {report.executionTimeMs} ms
-          </p>
         </div>
 
         <div className="flex items-center gap-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import confetti from "canvas-confetti";
 import { Navbar } from "@/components/Navbar";
 import { UrlInputForm } from "@/components/UrlInputForm";
@@ -183,7 +184,24 @@ export default function Home() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
         {/* Hero & Input Section (Always visible or compact) */}
         {!report && !comparison && !isLoading && (
-          <div className="text-center max-w-3xl mx-auto space-y-6 pt-4 sm:pt-8 animate-in fade-in duration-500">
+          <div className="text-center max-w-3xl mx-auto space-y-6 pt-4 sm:pt-6 animate-in fade-in duration-500">
+            {/* Logo Emblem */}
+            <div className="flex justify-center -mb-2">
+              <div className="relative group cursor-default">
+                <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/40 via-blue-600/40 to-indigo-500/40 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500"></div>
+                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-950/90 border border-cyan-500/30 p-2 shadow-2xl shadow-cyan-500/20 backdrop-blur-md flex items-center justify-center">
+                  <Image
+                    src="/logo.png"
+                    alt="AI Website Auditor Logo"
+                    width={88}
+                    height={88}
+                    className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.4)]"
+                    priority
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
               <Sparkles className="w-4 h-4 text-blue-400" />
               <span>Audit webových stránek poháněný umělou inteligencí</span>

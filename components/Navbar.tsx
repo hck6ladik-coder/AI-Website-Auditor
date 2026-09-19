@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { Sparkles, History, Settings, Globe, Github } from "lucide-react";
 
 interface NavbarProps {
@@ -26,10 +27,15 @@ export function Navbar({
           onClick={onResetToHome}
           className="flex items-center gap-2.5 cursor-pointer group select-none"
         >
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-cyan-500 p-0.5 shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
-            <div className="w-full h-full bg-slate-950 rounded-[14px] flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-blue-400" />
-            </div>
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900/90 border border-cyan-500/30 p-0.5 shadow-lg shadow-cyan-500/20 group-hover:scale-105 group-hover:border-cyan-400/60 transition-all flex items-center justify-center relative">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={36}
+              height={36}
+              className="w-full h-full object-contain rounded-lg"
+              priority
+            />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -79,7 +85,7 @@ export function Navbar({
           </button>
 
           <a
-            href="https://github.com"
+            href="https://github.com/hck6ladik-coder/AI-Website-Auditor"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 rounded-xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all hidden sm:flex"

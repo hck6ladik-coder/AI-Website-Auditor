@@ -1,12 +1,21 @@
-﻿# AI Website Auditor 🚀
+<div align="center">
 
-> **Moderní full-stack platforma pro 360° audit webových stránek** — analýza výkonu, technického SEO, bezpečnosti, přístupnosti (WCAG 2.1), srovnání s konkurencí a generování akčních AI doporučení včetně agenturní obchodní nabídky.
+<img src="public/logo.png" alt="AI Website Auditor Emblem" width="130" style="border-radius: 24px;" />
 
-![Next.js](https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue?style=flat-square&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38bdf8?style=flat-square&logo=tailwindcss)
-![WCAG](https://img.shields.io/badge/WCAG-2.1_AA-success?style=flat-square)
-![License](https://img.shields.io/badge/License-MIT-gray?style=flat-square)
+# AI Website Auditor 🚀
+
+**Moderní full-stack platforma pro 360° audit webových stránek**  
+*Analýza výkonu, technického SEO, bezpečnosti, přístupnosti (WCAG 2.1), srovnání s konkurencí a generování akčních AI doporučení včetně agenturní obchodní nabídky.*
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-15.5-black?style=flat-square&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-5.7-blue?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/TailwindCSS-3.4-38bdf8?style=flat-square&logo=tailwindcss" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/WCAG-2.1_AA-success?style=flat-square" alt="WCAG" />
+  <img src="https://img.shields.io/badge/License-MIT-gray?style=flat-square" alt="License" />
+</p>
+
+</div>
 
 ---
 
