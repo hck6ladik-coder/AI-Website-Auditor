@@ -43,6 +43,8 @@ export interface SeoAuditResult {
     multipleH1: boolean;
     status: 'pass' | 'warn' | 'fail';
     recommendation: string;
+    isH1Hidden?: boolean;
+    isH1Logo?: boolean;
   };
   openGraph: {
     hasBasicOg: boolean;

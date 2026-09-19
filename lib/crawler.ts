@@ -1,32 +1,135 @@
 import * as cheerio from "cheerio";
 import { SeoAuditResult, SecurityAuditResult, AssetsBreakdown, SecurityHeaderCheck } from "@/types/audit";
 
-async function checkRobotsTxt(origin: string): Promise<boolean> {
+async function checkRobotsAndSitemap(origin: string): Promise<{ robotsTxtFound: boolean; sitemapFound: boolean }> {
+  let robotsTxtFound = false;
+  let sitemapFound = false;
+  const sitemapUrlsFromRobots: string[] = [];
+
+  // 1. Fetch robots.txt
   try {
     const res = await fetch(`${origin}/robots.txt`, {
       signal: AbortSignal.timeout(5000),
       headers: { "User-Agent": "AI-Website-Auditor/1.0" },
     });
-    if (!res.ok) return false;
-    const text = await res.text();
-    return text.toLowerCase().includes("user-agent");
-  } catch {
-    return false;
-  }
-}
+    if (res.ok) {
+      const text = await res.text();
+      robotsTxtFound = text.toLowerCase().includes("user-agent");
 
-async function checkSitemapXml(origin: string): Promise<boolean> {
+      // Extract Sitemap directives from robots.txt (e.g. Sitemap: https://example.com/sitemap.xml)
+      const lines = text.split("\n");
+      for (const line of lines) {
+        const match = line.match(/^sitemap:\s*(https?:\/\/\S+)/i);
+        if (match && match[1]) {
+          sitemapUrlsFromRobots.push(match[1].trim());
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // 2. Fetch standard /sitemap.xml
   try {
     const res = await fetch(`${origin}/sitemap.xml`, {
       signal: AbortSignal.timeout(5000),
       headers: { "User-Agent": "AI-Website-Auditor/1.0" },
     });
-    if (!res.ok) return false;
-    const text = await res.text();
-    return text.includes("<urlset") || text.includes("<sitemapindex");
+    if (res.ok) {
+      const text = await res.text();
+      if (text.includes("<urlset") || text.includes("<sitemapindex")) {
+        sitemapFound = true;
+      }
+    }
   } catch {
-    return false;
+    // ignore
   }
+
+  // 3. If standard /sitemap.xml was not found, check sitemap declared in robots.txt
+  if (!sitemapFound && sitemapUrlsFromRobots.length > 0) {
+    try {
+      const res = await fetch(sitemapUrlsFromRobots[0], {
+        signal: AbortSignal.timeout(5000),
+        headers: { "User-Agent": "AI-Website-Auditor/1.0" },
+      });
+      if (res.ok) {
+        const text = await res.text();
+        if (text.includes("<urlset") || text.includes("<sitemapindex")) {
+          sitemapFound = true;
+        }
+      } else {
+        // Declaring a sitemap URL in robots.txt is still valid evidence of a sitemap
+        sitemapFound = true;
+      }
+    } catch {
+      sitemapFound = true;
+    }
+  }
+
+  return { robotsTxtFound, sitemapFound };
+}
+
+// Computes the accessible name for a heading element (handles text, aria-label, img[alt], svg, etc.)
+function getElementAccessibleHeadingText(
+  $: cheerio.CheerioAPI,
+  el: any
+): { text: string; isLogo: boolean; isHidden: boolean } {
+  // Check if visually hidden or sr-only
+  const classes = ($(el).attr("class") || "").toLowerCase();
+  const style = ($(el).attr("style") || "").toLowerCase();
+  const hiddenAttr = $(el).attr("hidden");
+  const ariaHidden = $(el).attr("aria-hidden");
+
+  const isSrOnlyClass =
+    classes.includes("sr-only") ||
+    classes.includes("visually-hidden") ||
+    classes.includes("hidden") ||
+    classes.includes("invisible") ||
+    classes.includes("screen-reader");
+
+  const isHiddenStyle =
+    style.includes("display:none") ||
+    style.includes("display: none") ||
+    style.includes("visibility:hidden") ||
+    style.includes("visibility: hidden") ||
+    style.includes("opacity:0") ||
+    style.includes("opacity: 0") ||
+    style.includes("left:-9999") ||
+    style.includes("clip:rect") ||
+    style.includes("clip: rect");
+
+  const isHidden = Boolean(hiddenAttr !== undefined || ariaHidden === "true" || isSrOnlyClass || isHiddenStyle);
+
+  // 1. Direct or nested aria-label
+  const ariaLabel = $(el).attr("aria-label")?.trim();
+  if (ariaLabel) return { text: ariaLabel, isLogo: false, isHidden };
+
+  // 2. Direct text content
+  const directText = $(el).text().replace(/\s+/g, " ").trim();
+
+  // 3. Check for image logo (e.g. <h1><a href="/"><img alt="Seznam.cz - hlavní strana"></a></h1>)
+  const imgAlts: string[] = [];
+  $(el).find("img[alt]").each((_, img) => {
+    const alt = $(img).attr("alt")?.trim();
+    if (alt && !imgAlts.includes(alt)) imgAlts.push(alt);
+  });
+
+  const svgTitle = $(el).find("svg title").text().trim() || $(el).find("svg[aria-label]").attr("aria-label")?.trim();
+
+  if (imgAlts.length > 0) {
+    return { text: imgAlts.join(" "), isLogo: true, isHidden };
+  }
+  if (svgTitle) {
+    return { text: svgTitle, isLogo: true, isHidden };
+  }
+
+  // 4. Fallback to title attribute
+  const titleAttr = $(el).attr("title")?.trim() || $(el).find("[title]").first().attr("title")?.trim();
+  if (!directText && titleAttr) {
+    return { text: titleAttr, isLogo: false, isHidden };
+  }
+
+  return { text: directText, isLogo: false, isHidden };
 }
 
 export interface CrawlResult {
@@ -104,14 +207,21 @@ export async function crawlWebsite(targetUrl: string): Promise<CrawlResult> {
     descRec = `Meta description je příliš dlouhý (${descLen} znaků). Může být ve vyhledávači useknut.`;
   }
 
-  // 3. Headings Analysis
+  // 3. Headings Analysis (accessible name calculation, handles image logos with alt, aria-label, role='heading')
   const h1Elements: string[] = [];
-  $("h1").each((_, el) => {
-    const text = $(el).text().trim();
-    if (text) h1Elements.push(text);
+  let isH1Hidden = false;
+  let isH1Logo = false;
+
+  $("h1, [role='heading'][aria-level='1']").each((i, el) => {
+    const { text, isLogo, isHidden } = getElementAccessibleHeadingText($, el);
+    const displayText = text || `(H1 bez textu #${i + 1})`;
+    h1Elements.push(displayText);
+    if (isHidden) isH1Hidden = true;
+    if (isLogo) isH1Logo = true;
   });
-  const h2Count = $("h2").length;
-  const h3Count = $("h3").length;
+
+  const h2Count = $("h2, [role='heading'][aria-level='2']").length;
+  const h3Count = $("h3, [role='heading'][aria-level='3']").length;
   const hasH1 = h1Elements.length > 0;
   const multipleH1 = h1Elements.length > 1;
 
@@ -123,7 +233,13 @@ export async function crawlWebsite(targetUrl: string): Promise<CrawlResult> {
     headingsRec = "Stránce chybí hlavní nadpis H1. Každá stránka by měla mít právě jeden srozumitelný H1 nadpis.";
   } else if (multipleH1) {
     headingsStatus = "warn";
-    headingsRec = `Nalezeno více nadpisů H1 (${h1Elements.length}). Z hlediska SEO a přístupnosti je doporučen pouze jeden hlavní H1.`;
+    headingsRec = `Nalezeno více nadpisů H1 (${h1Elements.length}x). Doporučujeme ponechat pouze jeden hlavní H1 pro definici tématu stránky.`;
+  } else if (isH1Hidden) {
+    headingsStatus = "warn";
+    headingsRec = "Hlavní nadpis H1 je v kódu přítomen, ale je vizuálně skrytý (sr-only/CSS). Pro optimální SEO a UX doporučujeme mít hlavní nadpis i viditelně zobrazený.";
+  } else if (isH1Logo) {
+    headingsStatus = "pass";
+    headingsRec = `Hlavní nadpis H1 je definován grafickým logem s alt popisem (${h1Elements[0]}). Doporučujeme zajistit, aby alt text obsahoval výstižná klíčová slova.`;
   }
 
   // 4. Open Graph
@@ -193,9 +309,9 @@ export async function crawlWebsite(targetUrl: string): Promise<CrawlResult> {
   // 8b. Live robots.txt & sitemap.xml verification
   let origin = "";
   try { origin = new URL(targetUrl).origin; } catch { /* ignore */ }
-  const [robotsTxtFound, sitemapFound] = origin
-    ? await Promise.all([checkRobotsTxt(origin), checkSitemapXml(origin)])
-    : [false, false];
+  const { robotsTxtFound, sitemapFound } = origin
+    ? await checkRobotsAndSitemap(origin)
+    : { robotsTxtFound: false, sitemapFound: false };
 
   // 9. Hreflang
   const hreflangs: string[] = [];
@@ -432,6 +548,8 @@ export async function crawlWebsite(targetUrl: string): Promise<CrawlResult> {
         multipleH1,
         status: headingsStatus,
         recommendation: headingsRec,
+        isH1Hidden,
+        isH1Logo,
       },
       openGraph: {
         hasBasicOg,

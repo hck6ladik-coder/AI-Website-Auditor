@@ -121,17 +121,37 @@ export function SeoCard({ seo, targetUrl }: SeoCardProps) {
               <span>Chybí hlavní nadpis H1! Doplňte právě jeden element &lt;h1&gt;.</span>
             </div>
           ) : (
-            <div className="space-y-1">
-              <span className="text-xs font-medium text-slate-400">Nalezené H1 nadpisy:</span>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-slate-400">Nalezené H1 nadpisy:</span>
+                {seo.headings.isH1Logo && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                    Obrázkové logo s alt popisem
+                  </span>
+                )}
+                {seo.headings.isH1Hidden && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                    Vizuálně skryto (sr-only)
+                  </span>
+                )}
+              </div>
               {seo.headings.h1.map((h1, i) => (
                 <div
                   key={i}
-                  className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-sm text-slate-200 flex items-center gap-2"
+                  className="p-2.5 rounded-lg bg-slate-950/70 border border-slate-800 text-sm text-slate-200 flex items-center justify-between gap-2"
                 >
-                  <span className="text-xs px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono">H1</span>
-                  <span className="truncate">{h1}</span>
+                  <div className="flex items-center gap-2 truncate">
+                    <span className="text-xs px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-mono">H1</span>
+                    <span className="truncate">{h1}</span>
+                  </div>
+                  {i === 0 && seo.headings.multipleH1 && (
+                    <span className="text-[10px] text-slate-500 font-mono">Primární</span>
+                  )}
                 </div>
               ))}
+              <p className="text-xs text-slate-400 pt-1 leading-relaxed">
+                {seo.headings.recommendation}
+              </p>
             </div>
           )}
         </div>

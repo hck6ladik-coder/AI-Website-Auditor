@@ -188,19 +188,45 @@ Vrať POUZE platný JSON (pole objektů).
     });
   }
 
-  // Headings H1
-  if (seo.headings.status !== "pass") {
+  // Headings H1 (differentiates missing vs hidden vs multiple H1s)
+  if (!seo.headings.hasH1) {
     recs.push({
-      id: "rec-seo-h1",
-      title: "Sjednoťte a doplňte hlavní nadpis H1",
+      id: "rec-seo-h1-missing",
+      title: "Doplňte chybějící hlavní nadpis H1",
       category: "SEO",
       priority: "high",
-      impact: "Zlepšení srozumitelnosti struktury pro roboty i čtečky",
+      impact: "Zásadní signál pro vyhledávače i čtečky obrazovky o tématu stránky",
       effort: "low",
       description: seo.headings.recommendation,
       solution:
-        "Ujistěte se, že stránka obsahuje právě jeden nadpis <h1>, který přesně vystihuje téma celé stránky.",
+        "Doplňte do šablony stránky právě jeden nadpis <h1> obsahující primární klíčové slovo.",
       codeSnippet: `<h1>Váš hlavní nadpis stránky s klíčovým slovem</h1>`,
+    });
+  } else if (seo.headings.isH1Hidden) {
+    recs.push({
+      id: "rec-seo-h1-hidden",
+      title: "Zviditelněte skrytý nadpis H1",
+      category: "SEO",
+      priority: "medium",
+      impact: "Lepší uživatelská přístupnost a silnější SEO relevance",
+      effort: "low",
+      description: seo.headings.recommendation,
+      solution:
+        "Nadpis H1 je v kódu přítomen, ale je skrytý pomocí CSS (sr-only/display:none). Zvažte zobrazení výstižného nadpisu i pro běžné návštěvníky.",
+      codeSnippet: `<!-- Místo skrytého H1 zobrazte přirozený nadpis -->\n<h1 class="text-3xl font-bold text-slate-900">\n  Výstižný hlavní nadpis stránky\n</h1>`,
+    });
+  } else if (seo.headings.multipleH1) {
+    recs.push({
+      id: "rec-seo-h1-multiple",
+      title: "Sjednoťte vícenásobné H1 nadpisy na jeden",
+      category: "SEO",
+      priority: "medium",
+      impact: "Vyjasnění sémantické hierarchie pro Google a indexovací roboty",
+      effort: "low",
+      description: seo.headings.recommendation,
+      solution:
+        "Ponechte pouze jeden hlavní H1 pro tělo stránky. Pokud máte H1 také v hlavičce nebo logu, nahraďte jej obecným prvkem <div> nebo <span>.",
+      codeSnippet: `<!-- V hlavičce použijte span/div -->\n<div class="logo">\n  <a href="/"><img src="/logo.svg" alt="Název webu" /></a>\n</div>\n\n<!-- Jediný H1 ponechte pro obsah stránky -->\n<main>\n  <h1>Hlavní nadpis stránky</h1>\n</main>`,
     });
   }
 

@@ -187,7 +187,10 @@ export function PrintReport({ report }: PrintReportProps) {
                   <span className="text-rose-700 font-bold">Chybí hlavní nadpis H1!</span>
                 ) : (
                   <span>
-                    Nalezeno {report.seo.headings.h1.length}x H1: &ldquo;{report.seo.headings.h1.join("; ")}&rdquo; (H2: {report.seo.headings.h2Count}, H3: {report.seo.headings.h3Count})
+                    Nalezeno {report.seo.headings.h1.length}x H1: &ldquo;{report.seo.headings.h1.join("; ")}&rdquo;
+                    {report.seo.headings.isH1Logo ? " (Grafické logo s alt popisem)" : ""}
+                    {report.seo.headings.isH1Hidden ? " (Vizuálně skryto / sr-only)" : ""}
+                    {" • "}H2: {report.seo.headings.h2Count}, H3: {report.seo.headings.h3Count}
                   </span>
                 )}
               </td>
