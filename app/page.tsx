@@ -185,17 +185,20 @@ export default function Home() {
         {/* Hero & Input Section (Always visible or compact) */}
         {!report && !comparison && !isLoading && (
           <div className="text-center max-w-3xl mx-auto space-y-6 pt-4 sm:pt-6 animate-in fade-in duration-500">
-            {/* Logo Emblem */}
-            <div className="flex justify-center -mb-2">
-              <div className="relative group cursor-default">
-                <div className="absolute -inset-2 bg-gradient-to-r from-cyan-500/40 via-blue-600/40 to-indigo-500/40 rounded-3xl blur-xl opacity-70 group-hover:opacity-100 transition duration-500"></div>
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-slate-950/90 border border-cyan-500/30 p-2 shadow-2xl shadow-cyan-500/20 backdrop-blur-md flex items-center justify-center">
+            {/* Levitating Logo Emblem without box */}
+            <div className="flex justify-center pt-2">
+              <div className="relative group cursor-default select-none animate-float">
+                {/* Ambient radial glow backdrop */}
+                <div className="absolute -inset-6 bg-cyan-500/20 rounded-full blur-2xl opacity-60 group-hover:opacity-90 transition duration-700 pointer-events-none"></div>
+                
+                {/* Free floating metallic emblem */}
+                <div className="relative w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center">
                   <Image
                     src="/logo.png"
-                    alt="AI Website Auditor Logo"
-                    width={88}
-                    height={88}
-                    className="w-full h-full object-contain filter drop-shadow-[0_0_12px_rgba(6,182,212,0.4)]"
+                    alt="AI Website Auditor Emblem"
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-contain logo-glow"
                     priority
                   />
                 </div>

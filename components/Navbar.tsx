@@ -25,15 +25,15 @@ export function Navbar({
         {/* Logo */}
         <div
           onClick={onResetToHome}
-          className="flex items-center gap-2.5 cursor-pointer group select-none"
+          className="flex items-center gap-3 cursor-pointer group select-none"
         >
-          <div className="w-10 h-10 rounded-xl overflow-hidden bg-slate-900/90 border border-cyan-500/30 p-0.5 shadow-lg shadow-cyan-500/20 group-hover:scale-105 group-hover:border-cyan-400/60 transition-all flex items-center justify-center relative">
+          <div className="relative w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
             <Image
               src="/logo.png"
-              alt="Logo"
+              alt="AI Website Auditor Logo"
               width={36}
               height={36}
-              className="w-full h-full object-contain rounded-lg"
+              className="w-full h-full object-contain drop-shadow-[0_0_10px_rgba(0,212,255,0.4)] group-hover:drop-shadow-[0_0_16px_rgba(0,212,255,0.7)] transition-all"
               priority
             />
           </div>

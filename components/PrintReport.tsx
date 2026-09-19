@@ -35,10 +35,10 @@ export function PrintReport({ report }: PrintReportProps) {
         <div className="flex items-center gap-4">
           <Image
             src="/logo.png"
-            alt="Logo"
-            width={56}
-            height={56}
-            className="w-14 h-14 object-contain rounded-xl border border-slate-300 p-1 bg-slate-950 shadow-sm"
+            alt="AI Website Auditor Emblem"
+            width={52}
+            height={52}
+            className="w-13 h-13 object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,0.18)]"
           />
           <div>
             <div className="flex items-center gap-2 mb-1">
